@@ -62,7 +62,6 @@ dep_envy_commit = 0.7.2
 dep_phrase_commit = 0.1.0
 dep_telemetry_commit = v1.1.0
 
-BUILD_DEPS += relx
 include erlang.mk
 
 
