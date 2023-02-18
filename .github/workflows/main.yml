@@ -32,5 +32,5 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
           build-image: erlang:${{env.OTP_VERSION}}
           image-description: >-
-            memcached API compatible server and client
+            Redis API compatible server and client
           image-licenses: Apache-2.0
