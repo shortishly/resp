@@ -6,6 +6,8 @@ on:
       - develop
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
+permissions:
+  packages: write
 env:
   OTP_VERSION: '25.2'
   REGISTRY: 'ghcr.io'
@@ -20,12 +22,8 @@ jobs:
           otp-version: ${{env.OTP_VERSION}}
       - name: Build
         run: make deps app dialyze tests
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ct-logs
-          path: logs
       - name: Beam Docker Release
-        uses: shortishly/beam-docker-release-action@v1
+        uses: shortishly/beam-docker-release-action@v1.29
         with:
           registry: ${{env.REGISTRY}}
           username: ${{github.actor}}
