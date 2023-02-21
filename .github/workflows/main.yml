@@ -25,7 +25,7 @@ jobs:
           name: ct-logs
           path: logs
       - name: Beam Docker Release
-        uses: shortishly/beam-docker-release-action@v1.28
+        uses: shortishly/beam-docker-release-action@3beaa5b1ef2e8b16099d04309bae905f0b376208
         with:
           registry: ${{env.REGISTRY}}
           username: ${{github.actor}}
