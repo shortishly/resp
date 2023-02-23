@@ -1,3 +1,4 @@
+%% -*- mode: erlang -*-
 %% Copyright (c) 2023 Peter Morgan <peter.james.morgan@gmail.com>
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +14,18 @@
 %% limitations under the License.
 
 
--define(CRLF, <<"\r\n">>).
-
-
--define(ARRAY,$*).
--define(BULK,$$).
--define(ERROR,$-).
--define(INTEGER,$:).
--define(STRING,$+).
+{$!, blob_error}.
+{$#, boolean}.
+{$$, bulk}.
+{$%, map}.
+{$(, big_number}.
+{$*, array}.
+{$+, string}.
+{$,, double}.
+{$-, error}.
+{$:, integer}.
+{$=, verbatim_string}.
+{$>, push}.
+{$_, null}.
+{$|, attribute}.
+{$~, set}.

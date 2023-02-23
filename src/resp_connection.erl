@@ -25,7 +25,6 @@
 -export([start_link/1]).
 -export([terminate/3]).
 -import(resp_statem, [nei/1]).
--include("resp.hrl").
 -include_lib("kernel/include/inet.hrl").
 -include_lib("kernel/include/logger.hrl").
 
@@ -114,14 +113,9 @@ handle_event(info,
     end;
 
 handle_event(internal,
-             {recv, <<Type:8, _/bytes>>= Encoded},
+             {recv, <<_:8, _/bytes>>= Encoded},
              _,
-             #{arg := #{callback := #{data := CallbackData}}})
-  when Type == ?STRING;
-       Type == ?ERROR;
-       Type == ?INTEGER;
-       Type == ?BULK;
-       Type == ?ARRAY ->
+             #{arg := #{callback := #{data := CallbackData}}}) ->
     {Decoded, Remainder} = resp_codec:decode(Encoded),
     {keep_state_and_data,
      [nei({callback,
