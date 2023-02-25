@@ -26,8 +26,8 @@ decode_encode_test_() ->
           (Encoded) ->
               {nm(Encoded),
                ?_assertEqual(
-                  iolist_to_binary(Encoded),
-                  decode_encode(Encoded))}
+                  iolist_to_binary(crlf(Encoded)),
+                  decode_encode(crlf(Encoded)))}
       end,
       Terms).
 
@@ -36,6 +36,16 @@ decode_encode(Encoded) ->
     {Decoded, <<>>} = resp_codec:decode(iolist_to_binary(Encoded)),
     iolist_to_binary(
       resp_codec:encode(Decoded)).
+
+crlf(Encoded) ->
+    string:replace(
+      string:replace(Encoded,
+                     "<CR>",
+                     "\r",
+                     all),
+      "<LF>",
+      "\n",
+      all).
 
 
 nm(Test) ->

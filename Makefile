@@ -21,6 +21,7 @@ PROJECT_VERSION = ${shell git describe --tags}
 
 DEPS = \
 	envy \
+	jsx \
 	phrase \
 	recon \
 	telemetry
@@ -43,6 +44,7 @@ PLT_APPS = \
 	compiler \
 	crypto \
 	inets \
+	jsx \
 	mnesia \
 	phrase \
 	public_key \
@@ -62,7 +64,7 @@ dep_envy_commit = 0.7.2
 dep_phrase_commit = 0.1.0
 dep_telemetry_commit = v1.1.0
 
-include erlang.mk
+include $(if $(ERLANG_MK_FILENAME),$(ERLANG_MK_FILENAME),erlang.mk)
 
 
 app:: rebar.config

@@ -16,7 +16,19 @@
 -module(resp_util).
 
 
+-export([is_exported/3]).
 -export([snake_case/1]).
+
+
+is_exported(M, F, A) ->
+    _ = case erlang:module_loaded(M) of
+            false ->
+                code:ensure_loaded(M);
+
+            true ->
+                ok
+        end,
+    erlang:function_exported(M, F, A).
 
 
 snake_case([_ | _] = Labels) ->

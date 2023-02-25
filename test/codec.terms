@@ -18,7 +18,7 @@
 %% Simple strings:
 %%
 "+OK\r\n".
-
+"+hello world\r\n".
 
 %%
 %% Errors:
@@ -26,14 +26,14 @@
 "-Error message\r\n".
 "-ERR unknown command 'helloworld'\r\n".
 "-WRONGTYPE Operation against a key holding the wrong kind of value\r\n".
-
+"-ERR this is the error description\r\n".
 
 %%
 %% Integers:
 %%
 ":0\r\n".
 ":1000\r\n".
-
+":1234\r\n".
 
 %%
 %% Bulk strings:
@@ -42,6 +42,10 @@
 "$7\r\nhel\r\nlo\r\n".
 "$0\r\n\r\n".
 "$-1\r\n".
+"$10\r\nhelloworld\r\n".
+
+"$9<CR><LF>"
+"Get-Reply<CR><LF>".
 
 
 %%
@@ -59,4 +63,114 @@
 "$5\r\n"
 "hello\r\n".
 
+"*2\r\n"
+"*2\r\n"
+":1\r\n"
+":2\r\n"
+"#t\r\n".
+
+"*2\r\n"
+"*3\r\n"
+":1\r\n"
+"$5\r\n"
+"hello\r\n"
+":2\r\n"
+"#f\r\n".
+
 "*-1\r\n".
+
+"*2<CR><LF>"
+":2039123<CR><LF>"
+":9543892<CR><LF>".
+
+
+%%
+%% Null
+%%
+"_\r\n".
+
+
+%%
+%% double
+%%
+",1.23\r\n".
+":10\r\n".
+",10\r\n".
+",inf\r\n".
+",-inf\r\n".
+
+
+%%
+%% boolean
+%%
+"#t\r\n".
+"#f\r\n".
+
+
+%%
+%% blob error
+%%
+"!21\r\nSYNTAX invalid syntax\r\n".
+
+
+%%
+%% verbatim string
+%%
+"=15\r\ntxt:Some string\r\n".
+
+
+%%
+%% big number
+%%
+"(3492890328409238509324850943850943825024385\r\n".
+
+
+%%
+%% map
+%%
+"%2\r\n"
+"+first\r\n"
+":1\r\n"
+"+second\r\n"
+":2\r\n".
+
+
+%%
+%% set
+%%
+"~5\r\n"
+"+orange\r\n"
+"+apple\r\n"
+"#t\r\n"
+":100\r\n"
+":999\r\n".
+
+
+%%
+%% attributes
+%%
+"|1<CR><LF>"
+"+key-popularity<CR><LF>"
+"%2<CR><LF>"
+"$1<CR><LF>"
+"a<CR><LF>"
+",0.1923<CR><LF>"
+"$1<CR><LF>"
+"b<CR><LF>"
+",0.0012<CR><LF>".
+
+
+%%
+%% push
+%%
+">4<CR><LF>"
+"+pubsub<CR><LF>"
+"+message<CR><LF>"
+"+somechannel<CR><LF>"
+"+this is the message<CR><LF>".
+
+">4<CR><LF>"
+"+pubsub<CR><LF>"
+"+message<CR><LF>"
+"+somechannel<CR><LF>"
+"+this is the message<CR><LF>".

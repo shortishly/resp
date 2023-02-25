@@ -18,6 +18,7 @@
 
 -export([init/1]).
 -export([recv/1]).
+-include_lib("kernel/include/logger.hrl").
 
 
 -record(entry,
@@ -26,18 +27,60 @@
 
 
 init([]) ->
-    {ok, #{table => ets:new(?MODULE, [{keypos, 2}, public, named_table])}}.
+    {ok,
+     #{table => ets:new(?MODULE, [{keypos, 2}, public, named_table]),
+       protocol => #{version => 2}}}.
 
 
-recv(#{message := {array, [{bulk, <<"INFO">>}]}}) ->
-    {continue, {encode, {bulk, "# Server\r\nredis_version:1.2.3\r\n"}}};
 
-recv(#{message := {array, [{bulk, <<"HSET">>}, {bulk, Key} | NamedValues]}}) ->
+
+recv(#{command := #{name := info}, message := {array, [_]}}) ->
+    {continue,
+     {encode,
+      {bulk,
+       ["# Server\r\nredis_version:", resp:version(), "\r\n"]}}};
+
+recv(#{command := #{name := command}, message := {array, _}}) ->
+    {continue, {encode, {array, []}}};
+
+recv(#{command := #{name := hello},
+       message := {array, [_, {bulk, <<"3">>}]},
+       data := #{protocol := Protocol} = Data}) ->
+    {continue,
+     Data#{protocol := Protocol#{version => 3}},
+     {encode,
+      {map,
+       [{{bulk, <<"server">>}, {bulk, <<"resp">>}},
+        {{bulk, <<"version">>}, {bulk, resp:version()}},
+        {{bulk,<<"proto">>}, {integer, 3}},
+        {{bulk, <<"id">>}, {integer, erlang:phash2(self())}},
+        {{bulk, <<"mode">>}, {bulk, <<"standalone">>}},
+        {{bulk, <<"role">>}, {bulk, <<"master">>}},
+        {{bulk, <<"modules">>}, {array, []}}]}}};
+
+recv(#{command := #{name := hello},
+       message := {array, [_, {bulk, <<"2">>}]},
+       data := #{protocol := Protocol} = Data}) ->
+    {continue,
+     Data#{protocol := Protocol#{version => 2}},
+     {encode,
+      {array,
+       [{bulk, <<"server">>}, {bulk, <<"resp">>},
+        {bulk, <<"version">>}, {bulk, resp:version()},
+        {bulk, <<"proto">>}, {integer, 2},
+        {bulk, <<"id">>}, {integer, erlang:phash2(self())},
+        {bulk, <<"mode">>}, {bulk, <<"standalone">>},
+        {bulk, <<"role">>}, {bulk, <<"master">>},
+        {bulk, <<"modules">>}, {array, []}]}}};
+
+recv(#{command := #{name := hset},
+       message := {array, [_, {bulk, Key} | NamedValues]}}) ->
     Hash = hash(NamedValues),
     ets:insert(?MODULE, #entry{key = Key, hash = Hash}),
     {continue, {encode, {integer, map_size(Hash)}}};
 
-recv(#{message := {array, [{bulk, <<"HGET">>}, {bulk, Key}, {bulk, Field}]}}) ->
+recv(#{command := #{name := hget},
+       message := {array, [_, {bulk, Key}, {bulk, Field}]}}) ->
     case ets:lookup(?MODULE, Key) of
         [] ->
             {continue, {encode, {array, []}}};
@@ -52,7 +95,8 @@ recv(#{message := {array, [{bulk, <<"HGET">>}, {bulk, Key}, {bulk, Field}]}}) ->
             end
     end;
 
-recv(#{message := {array, [{bulk, <<"HGETALL">>}, {bulk, Key}]}}) ->
+recv(#{command := #{name := hgetall},
+       message := {array, [_, {bulk, Key}]}}) ->
     case ets:lookup(?MODULE, Key) of
         [] ->
             {continue, {encode, {array, []}}};
@@ -70,7 +114,8 @@ recv(#{message := {array, [{bulk, <<"HGETALL">>}, {bulk, Key}]}}) ->
                  Hash)}}}
     end;
 
-recv(#{message := {array, [{bulk, Command} | _]}}) ->
+recv(#{message := {array, [{bulk, Command} | _]}} = Arg) ->
+    ?LOG_DEBUG(#{unknown => Arg}),
     {continue, {encode, {error, ["unknown command '", Command, "'"]}}}.
 
 

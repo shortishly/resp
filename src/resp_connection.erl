@@ -25,7 +25,6 @@
 -export([start_link/1]).
 -export([terminate/3]).
 -import(resp_statem, [nei/1]).
--include("resp.hrl").
 -include_lib("kernel/include/inet.hrl").
 -include_lib("kernel/include/logger.hrl").
 
@@ -60,11 +59,22 @@ callback_mode() ->
     handle_event_function.
 
 
-handle_event(internal,
-             {callback, F, A},
-             _,
-             #{arg := #{callback := #{module := M}}}) ->
+handle_event(
+  internal,
+  {callback, F, A},
+  _,
+  #{arg := #{callback := #{module := M} = Callback} = Arg} = Data) ->
     try apply(M, F, A) of
+        {continue, CallbackData, Actions} when is_list(Actions) ->
+            {keep_state,
+             Data#{arg := Arg#{callback := Callback#{data := CallbackData}}},
+             [nei(Action) || Action <- Actions]};
+
+        {continue, CallbackData, Action} ->
+            {keep_state,
+             Data#{arg := Arg#{callback := Callback#{data := CallbackData}}},
+             nei(Action)};
+
         {continue, Actions} when is_list(Actions) ->
             {keep_state_and_data, [nei(Action) || Action <- Actions]};
 
@@ -114,27 +124,37 @@ handle_event(info,
     end;
 
 handle_event(internal,
-             {recv, <<Type:8, _/bytes>>= Encoded},
+             {recv, <<_:8, _/bytes>>= Encoded},
              _,
-             #{arg := #{callback := #{data := CallbackData}}})
-  when Type == ?STRING;
-       Type == ?ERROR;
-       Type == ?INTEGER;
-       Type == ?BULK;
-       Type == ?ARRAY ->
-    {Decoded, Remainder} = resp_codec:decode(Encoded),
-    {keep_state_and_data,
-     [nei({callback,
-           recv,
-           [#{message => Decoded,
-              data => CallbackData}]}),
+             #{arg := #{callback := #{data := CallbackData}}}) ->
+    case resp_codec:decode(Encoded) of
+        {{array, [{bulk, Command} | _]} = Decoded, Remainder} ->
+            try
+                {keep_state_and_data,
+                 [nei({callback,
+                       recv,
+                       [#{message => Decoded,
+                          command => command(string:casefold(Command)),
+                          data => CallbackData}]}),
 
-      nei({telemetry,
-           recv,
-           #{count => 1},
-           #{message => Decoded}}),
+                  nei({telemetry,
+                       recv,
+                       #{count => 1},
+                       #{message => Decoded}}),
 
-      nei({recv, Remainder})]};
+                  nei({recv, Remainder})]}
+
+            catch
+                error:badarg ->
+                    {keep_state_and_data,
+                     [nei({encode, {error, ["unknown command '", Command, "'"]}}),
+                      nei({recv, Remainder})]}
+            end;
+
+        {_, Remainder} ->
+            {keep_state_and_data,
+             [nei({encode, {error, ["syntax"]}}), nei({recv, Remainder})]}
+    end;
 
 handle_event(internal, {recv, <<>>}, _, _) ->
     keep_state_and_data;
@@ -238,3 +258,8 @@ terminate(_Reason, _State, #{arg := #{socket := Socket}}) ->
 
 terminate(_Reason, _State, _Data) ->
     ok.
+
+
+command(Command) ->
+    #{name => binary_to_atom(Command),
+      info => resp_command:info(string:casefold(Command))}.
