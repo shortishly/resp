@@ -1,0 +1,44 @@
+{
+    "CONFIG": {
+        "summary": "Configure Sentinel",
+        "complexity": "O(1)",
+        "group": "sentinel",
+        "since": "6.2.0",
+        "arity": -3,
+        "container": "SENTINEL",
+        "function": "sentinelCommand",
+        "command_flags": [
+            "ADMIN",
+            "SENTINEL",
+            "ONLY_SENTINEL"
+        ],
+        "arguments": [
+            {
+                "name":"action",
+                "type":"oneof",
+                "arguments":[
+                    {
+                        "name":"set",
+                        "token":"SET",
+                        "type":"block",
+                        "arguments":[
+                            {
+                                "name":"parameter",
+                                "type":"string"
+                            },
+                            {
+                                "name":"value",
+                                "type":"string"
+                            }
+                        ]
+                    },
+                    {
+                        "token":"GET",
+                        "name":"parameter",
+                        "type":"string"
+                    }
+                ]
+            }
+        ]
+    }
+}

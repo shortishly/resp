@@ -18,6 +18,12 @@
 
 -export([priv_dir/0]).
 -export([start/0]).
+-export([version/0]).
+
+
+version() ->
+    {ok, Version} = application:get_key(resp, vsn),
+    Version.
 
 
 start() ->
