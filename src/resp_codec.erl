@@ -48,6 +48,8 @@ types() ->
     [?MODULE, ?FUNCTION_NAME].
 
 
+-spec decode(binary()) -> {resp:tv(), binary()} | partial.
+
 decode(<<Type:8, Encoded/bytes>>) ->
     ?FUNCTION_NAME(type(?FUNCTION_NAME, Type), Encoded).
 
@@ -162,6 +164,8 @@ decode(Type, N, Encoded, A) when Type == array;
             partial
     end.
 
+
+-spec encode(resp:tv()) -> iodata().
 
 encode(null = Type) ->
     [type(?FUNCTION_NAME, Type), crlf()];

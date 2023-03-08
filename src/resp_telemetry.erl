@@ -53,7 +53,7 @@ init([_Arg]) ->
 
     catch
         error:badarg ->
-            ?LOG_NOTICE(#{stopping => "no configuration for telemetry"}),
+            ?LOG_NOTICE(#{?MODULE => "no configuration"}),
             ignore
     end.
 

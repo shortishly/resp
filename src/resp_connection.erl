@@ -90,7 +90,10 @@ handle_event(
         {stop, Reason} ->
             {stop, Reason}
     catch
-        error:badarg ->
+        Class:Exception:Stacktrace ->
+            ?LOG_ERROR(#{class => Class,
+                         exception => Exception,
+                         stacktrace => Stacktrace}),
             {keep_state_and_data,
              nei({encode, {error, "not implemented"}})}
     end;
@@ -244,8 +247,7 @@ handle_event(info, Msg, _, #{requests := Existing} = Data) ->
             {keep_state, Data#{requests := Updated}};
 
         no_request ->
-            ?LOG_ERROR(#{msg => Msg, data => Data}),
-            keep_state_and_data;
+            {keep_state_and_data, nei({callback, info, [Msg]})};
 
         no_reply ->
             ?LOG_ERROR(#{msg => Msg, data => Data}),

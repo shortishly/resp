@@ -19,7 +19,31 @@
 -export([priv_dir/0]).
 -export([start/0]).
 -export([version/0]).
+-export_type([int64/0]).
+-export_type([resp2/0]).
+-export_type([resp3/0]).
+-export_type([tv/0]).
 
+-type int64() :: -9_223_372_036_854_775_808..9_223_372_036_854_775_807.
+
+-type resp2() :: {array, [tv()] | null}
+               | {bulk, iodata() | null}
+               | {string, iodata()}
+               | {error, iodata()}
+               | {integer, int64()}.
+
+-type resp3() :: null
+               | {double, float()}
+               | {boolean, boolean()}
+               | {verbatim_string, iodata()}
+               | {map, [tv()]}
+               | {set, [tv()]}
+               | {attribute, [tv()]}
+               | {push, iodata()}
+               | {big_number, integer()}.
+
+-type tv() :: resp2()
+            | resp3().
 
 version() ->
     {ok, Version} = application:get_key(resp, vsn),
