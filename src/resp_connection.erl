@@ -90,7 +90,10 @@ handle_event(
         {stop, Reason} ->
             {stop, Reason}
     catch
-        error:badarg ->
+        Class:Exception:Stacktrace ->
+            ?LOG_ERROR(#{class => Class,
+                         exception => Exception,
+                         stacktrace => Stacktrace}),
             {keep_state_and_data,
              nei({encode, {error, "not implemented"}})}
     end;
