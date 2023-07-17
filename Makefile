@@ -18,6 +18,9 @@ PROJECT = resp
 PROJECT_DESCRIPTION = Redis Serialization Protocol
 PROJECT_VERSION = ${shell git describe --tags}
 
+COVER = 1
+COVER_REPORT_DIR = _site/cover
+CT_LOGS_DIR = _site/ct
 
 DEPS = \
 	envy \
@@ -55,6 +58,8 @@ PLT_APPS = \
 	telemetry \
 	tools \
 	xmerl
+
+EDOC_OPTS = {preprocess, true}, {dir, "_site/edoc"}
 
 dep_envy = git https://github.com/shortishly/envy.git
 dep_phrase = git https://github.com/shortishly/phrase.git
