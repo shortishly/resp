@@ -60,7 +60,7 @@ jobs:
       - run: make edoc
       - run: make tests
       - run: bin/coverdata --output _site/cover/coverage.json --precision 3
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v2
         with:
           path: _site
   deploy:
