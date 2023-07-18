@@ -6,8 +6,6 @@ on:
       - develop
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
-permissions:
-  packages: write
 env:
   REGISTRY: 'ghcr.io'
 jobs:
@@ -30,6 +28,8 @@ jobs:
           path: _site/ct
   package:
     needs: build
+    permissions:
+      packages: write
     strategy:
       matrix:
         otp:
@@ -45,6 +45,11 @@ jobs:
           image-description: >-
             Redis API compatible server and client
           image-licenses: Apache-2.0
+      - uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{secrets.SNYK_TOKEN}}
+        with:
+          image: ${{env.DOCKER_IMAGE_TAGS}}
   site:
     needs: build
     strategy:
