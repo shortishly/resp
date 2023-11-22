@@ -141,7 +141,7 @@ handle_event(internal,
                           data => CallbackData}]}),
 
                   nei({telemetry,
-                       recv,
+                       decode,
                        #{count => 1},
                        #{message => Decoded}}),
 

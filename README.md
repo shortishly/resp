@@ -1,4 +1,24 @@
-# Erlang Redis Serialization Protocol Server (and Client)
+<br>
+
+<p align="center">
+    <a href="https://shortishly.github.io/resp/cover/">
+      <img alt="Test Coverage" src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fshortishly.github.io%2Fresp%2Fcover%2Fcoverage.json&query=%24.total&suffix=%25&style=flat-square&label=Test%20Coverage&color=green">
+    </a>
+    <a href="https://shortishly.github.io/resp/edoc/">
+      <img alt="edoc" src="https://img.shields.io/badge/Documentation-edoc-green?style=flat-square">
+    </a>
+    <a href="https://erlang.org/">
+      <img alt="Erlang/OTP 25+" src="https://img.shields.io/badge/Erlang%2FOTP-25%2B-green?style=flat-square">
+    </a>
+    <a href="https://www.apache.org/licenses/LICENSE-2.0">
+      <img alt="Apache-2.0" src="https://img.shields.io/github/license/shortishly/resp?style=flat-square">
+    </a>
+</p>
+
+## What is RESP?
+
+[resp][resp-github] implements both the server and client of Redis
+serialization protocol in Erlang.
 
 ## Protocol
 
@@ -64,3 +84,5 @@ gen_statem:receive_response(
 ## Telemetry
 
 Both the client and server have instrumentation using Telemetry.
+
+[resp-github]: https://github.com/shortishly/resp
