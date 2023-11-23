@@ -22,42 +22,39 @@ COVER = 1
 COVER_REPORT_DIR = _site/cover
 CT_LOGS_DIR = _site/ct
 
-DEPS = \
-	envy \
-	jsx \
-	phrase \
-	recon \
-	telemetry
+
+DEPS += envy
+DEPS += jsx
+DEPS += phrase
+DEPS += recon
+DEPS += telemetry
 
 BUILD_DEPS += relx
 RELX_TAR = 0
 
-SHELL_DEPS = \
-	sync
+SHELL_DEPS += sync
 
-SHELL_OPTS = \
-	-config dev.config \
-	-s $(PROJECT) \
-	-s sync \
-	+pc unicode
+SHELL_OPTS += +pc unicode
+SHELL_OPTS += -config dev.config
+SHELL_OPTS += -s $(PROJECT)
+SHELL_OPTS += -s sync
 
-PLT_APPS = \
-	any \
-	asn1 \
-	compiler \
-	crypto \
-	inets \
-	jsx \
-	mnesia \
-	phrase \
-	public_key \
-	runtime_tools \
-	ssl \
-	stdlib \
-	syntax_tools \
-	telemetry \
-	tools \
-	xmerl
+PLT_APPS +=any
+PLT_APPS +=asn1
+PLT_APPS +=compiler
+PLT_APPS +=crypto
+PLT_APPS +=inets
+PLT_APPS +=jsx
+PLT_APPS +=mnesia
+PLT_APPS +=phrase
+PLT_APPS +=public_key
+PLT_APPS +=runtime_tools
+PLT_APPS +=ssl
+PLT_APPS +=stdlib
+PLT_APPS +=syntax_tools
+PLT_APPS += telemetry
+PLT_APPS += tools
+PLT_APPS += xmerl
 
 EDOC_OPTS = {preprocess, true}, {dir, "_site/edoc"}
 
@@ -65,7 +62,8 @@ dep_envy = git https://github.com/shortishly/envy.git
 dep_phrase = git https://github.com/shortishly/phrase.git
 dep_telemetry = git https://github.com/beam-telemetry/telemetry.git
 
-dep_envy_commit = 0.9.1
+dep_envy_commit = 0.9.2
+dep_jsx_commit = v3.1.0
 dep_phrase_commit = 0.2.1
 dep_telemetry_commit = v1.1.0
 
